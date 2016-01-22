@@ -1,6 +1,6 @@
 
 
-addpath('/users/data/ferradan/ImageSynth/code/filters');
+addpath(genpath('/users/data/ferradan/ImageSynth/code/'));
 
 %Obtain statistics on the videos 
 L=8;
