@@ -19,7 +19,7 @@ dirimages = dir([path '*.JPEG']);
 linearindx = @(v)(v(1)-1).*L+v(2);
 k = J*L/2; %sparsity value
 
-%Initialize
+disp('Initialize']);
 for j2=2:J
     for l2=1:L
         lambda2=[j2 l2];
@@ -27,7 +27,7 @@ for j2=2:J
     end 
 end
 
-
+disp('and compute DB']);
 for i_im = 1:min(size(dirimages,1),Totalnum_im)
     image = double(imread([path dirimages(i_im).name]));
     image = imresize(image(:,:,1),[Ni,Ni]);
@@ -43,9 +43,13 @@ for i_im = 1:min(size(dirimages,1),Totalnum_im)
          %   filters_image{3}{linearindx(lambda2)} = learn_dict(double(D),k);
         end 
     end 
+    
+    disp(['[image ' num2str(i_im) ']Size X:'])
+    X
 
 end 
-
+save('./Database.mat','X','Totalnum_im','J','Ni','L')
+disp(['start computing dictionary'])
 %X=D,alpha
  for j2=2:J
     for l2=1:L
