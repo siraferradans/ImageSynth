@@ -12,7 +12,7 @@ Ni= 128;%2^J;%sqrt(Na*2^(J-1));
 [filters_image, options_image,lpal] = generate_translate_wavelets([Ni Ni], J, L, 'image');
 %for reconstruction 
 
-Totalnum_im = 1;
+Totalnum_im = 100;
 path='../../data/' ;
 
 X=getDabase_forDicts(path,Totalnum_im,J,L,Ni,filters_image, options_image);
