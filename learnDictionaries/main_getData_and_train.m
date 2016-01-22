@@ -17,17 +17,22 @@ path='../../data/' ;
 
 X=getDabase_forDicts(path,Totalnum_im,J,L,Ni,filters_image, options_image);
 
-%k = J*L/2; %sparsity value
 save('./Database.mat','X','Totalnum_im','J','Ni','L')
 
 disp(['start computing dictionary'])
-%X=D,alpha
+%X=D*alpha, we want to get the best dictionary and the alphas for our DB
  for j2=2:J
     for l2=1:L
+        lambda2=[j2 l2];
+        
+        Lambda1 = size(X{linearindx(lambda2)},1);
+        k = Lambda1*2/3; %sparsity value 2/3 of whole dimension
+
         [auxD,auxalpha,err]= learn_dict(double(X{linearindx(lambda2)}),k);
         D{linearindx(lambda2)} = auxD;
         alpha{linearindx(lambda2)}=auxalpha;
         ['For lambda2=[' num2str(j2) ',' num2str(l2) '], err=' num2str(err(end))]
     end 
  end 
-       
+ save('./Dictionaries.mat','D','alpha','err')
+      
