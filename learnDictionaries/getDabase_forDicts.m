@@ -29,7 +29,9 @@ for i_im = 1:min(size(dirimages,1),Totalnum_im)
         end 
     end 
     
-    disp(['[image ' num2str(i_im) ']Size X:'])
-    X
+    if  ~mod(i_im,20)
+        disp(['[image ' num2str(i_im) ']Size X:'])
+        X
+    end 
 
 end 
