@@ -11,7 +11,7 @@ J = 3;
 Ni= 128;%2^J;%sqrt(Na*2^(J-1));
 [filters_image, options_image,lpal] = generate_translate_wavelets([Ni Ni], J, L, 'image');
 %for reconstruction 
-path='../../data/';
+path='../../data/' ;
 
 Totalnum_im = 5;
 dirimages = dir([path '*.JPEG']);
