@@ -27,7 +27,7 @@ disp(['start computing dictionary'])
         lambda2=[j2 l2];
         
         Lambda1 = size(X{linearindx(lambda2)},1);
-        k = Lambda1*2/3; %sparsity value 2/3 of whole dimension
+        k = ceil(Lambda1*2/3); %sparsity value 2/3 of whole dimension
 
         [auxD,auxalpha,err]= learn_dict(double(X{linearindx(lambda2)}),k);
         D{linearindx(lambda2)} = auxD;
