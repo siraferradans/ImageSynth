@@ -22,7 +22,7 @@ for i_im = 1:min(size(dirimages,1),Totalnum_im)
     for j2=2:J
         for l2=1:L
             lambda2=[j2 l2];
-            aux=getDatabase_onY2(Y2,lambda2,J,Ni);
+            aux=getDatabase_onY2(Y2,lambda2);
             X{linearindx(lambda2)}=cat(2,X{linearindx(lambda2)},aux);
            
          %   filters_image{3}{linearindx(lambda2)} = learn_dict(double(D),k);
