@@ -1,12 +1,17 @@
-function [D,X,err]=learn_dict(Y,k,p)
+function [D,X,err]=learn_dict(Y,k,n,p)
 %
 % energy: Y-D*X, with target sparsity k, X is of w length
 % Y: (d,m) with m patches of dim. d
 % k: maximum sparsity
+% n: n dims of 
+% p: number of vectors that we want to use for the training (p with maximum
+%    norm)
+
+verbose = 1;
 
 [d,m]=size(Y); %num. of vectors used for the training
 
-if nargin<3
+if nargin<4
     p=m;
 end 
 
@@ -18,8 +23,9 @@ end
 eps=1e-5;
 ProjC = @(D)D ./ repmat( sqrt(sum(D.^2)+eps), [d 1]);% [w, 1] );
 
-sel = randperm(p); sel = sel(1:k);
-D =ProjC( sparse(double(Y(:,sel))));
+%select some subset of the data to initialize the dictionary
+sel = randperm(p); sel = sel(1:n);
+D =ProjC(sparse(double(Y(:,sel))));
 
 %init
 X = sparse(rand(size(D,2),size(Y,2)));
@@ -31,18 +37,21 @@ niter=100;
 for it=1:niter
 
     progressbar(it,niter,20);
-    X = updateX(Y,D,k,X); 
-    D = updateD(X,Y,D);
+    X = updateX(Y,D,k,X,verbose); 
+    D = updateD(X,Y,D,verbose);
 
     err(it) = norm2(Y-D*X);
-    subplot(1,3,3);plot(log10(err+eps));drawnow
-    
+    if verbose
+        subplot(1,3,3);plot(log10(err+eps));drawnow
+    end 
     if err(it)<1e-4
         return;
     end 
    
 end
-subplot(1,3,3);plot(log10(err+eps));
+if verbose
+    subplot(1,3,3);plot(log10(err+eps));
+end 
 % hold on;
 
 % [~,I] = sort(sum(X.^2,2), 'descend'); %todo:randomly select on each it.
@@ -52,7 +61,7 @@ subplot(1,3,3);plot(log10(err+eps));
 
 end     
 
-function D = updateD(X,Y,D)
+function D = updateD(X,Y,D,verbose)
 
 [d,~]=size(D);
 epsilon = 1e-3;
@@ -69,19 +78,23 @@ for j=1:it
     
     %for debugging
     Err(j) = norm2(Y-D*X);
-    if (j>1) 
-        if Err(j-1)-Err(j) < 1e-5
-              subplot(1,3,1);plot(log10(Err),'-');drawnow;
+    if verbose
+        if (j>1) 
+            if Err(j-1)-Err(j) < 1e-8
+                  subplot(1,3,1);plot(log10(Err),'-');drawnow;
 
-            return;
-        end 
+                return;
+            end 
+        end
     end 
 end
+if verbose
     subplot(1,3,1);plot(log10(Err),'*-');drawnow;
-
+end 
 end 
 
-function X = updateX(Y,D,k,X)
+function X = updateX(Y,D,k,X,verbose)
+
 %Update of the Coefficients X
 select = @(A,k)repmat(A(k,:), [size(A,1) 1]);
 ProjX = @(X,k)X .* (abs(X) >= select(sort(abs(X), 'descend'),k));
@@ -94,19 +107,22 @@ norm2=@(D)sqrt(sum((abs(D(:)).^2)));
 
 it = 10000; 
 for j=1:it
-    X = ProjX(X-t*D'*(D*X-Y),k);
+    X = ProjX(X-t*D'*(D*X-Y),k);%soft thresholding on the grad desc
     
     %for debugging
     Err(j) = norm2(Y-D*X);
-     if (j>1) 
-        if Err(j-1)-Err(j) < 1e-5
+   if verbose
+    if (j>1) 
+        if Err(j-1)-Err(j) < 1e-8
             subplot(1,3,2);plot(log10(Err),'-');drawnow;
             return;
         end 
-     end 
+    end
+   end
   
 end
+if verbose
    subplot(1,3,2);plot(log10(Err),'*-');drawnow;
-            
+end   
 
 end 

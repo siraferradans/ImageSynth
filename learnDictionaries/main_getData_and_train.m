@@ -19,7 +19,9 @@
 % 
 % save('./Database.mat','X','Totalnum_im','J','Ni','L')
 
-load('./Database.mat');
+load('../../generated_data/Database.mat');
+
+linearindx = @(lambda)(lambda(1)-1).*L+lambda(2);
 disp(['start computing dictionary'])
 %X=D*alpha, we want to get the best dictionary and the alphas for our DB
  for j2=2:J
@@ -27,10 +29,10 @@ disp(['start computing dictionary'])
         lambda2=[j2 l2];
         
         Lambda1 = size(X{linearindx(lambda2)},1);
-        k = ceil(Lambda1*2/3); %sparsity value 2/3 of whole dimension
-
+        n = ceil(Lambda1*2/3); %dim of the atoms value 2/3 of whole dimension
+        k = 4; %sparsity param
         disp(['k-sparsity parameter: ' num2str(k)])
-        [auxD,auxalpha,err]= learn_dict(double(X{linearindx(lambda2)}),k);
+        [auxD,auxalpha,err]= learn_dict(double(X{linearindx(lambda2)}),k,n);
         D{linearindx(lambda2)} = auxD;
         alpha{linearindx(lambda2)}=auxalpha;
         ['For lambda2=[' num2str(j2) ',' num2str(l2) '], err=' num2str(err(end))]
