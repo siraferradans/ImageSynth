@@ -1,4 +1,4 @@
-function [S, U] = fwdscatt_dicts(in, filters, options)
+function [S, U] = scattering2d(in, filters, options)
 
 local = getoptions(options, 'localized',1);
 
@@ -95,22 +95,6 @@ l1 = 2^(J-1)*ch(1:ids_f:end,1:ids_f:end);
 
 end
 
-function Dl2=getDatabase_onY2(Y2,lambda2)
-%This function saves from S the values (|x conv Psi_j1| conv Psi_j2)(u), for all
-%j1, and u
-
-j2 = lambda2(1);
-l2 = lambda2(2);
-
-rast = 1;
-
-for i=1:length(Y2{3})
-    if ((Y2{3}{i}.scale(3) == j2) && (Y2{3}{i}.orientation(3) == l2))
-        Dl2(rast,:) = Y2{3}{i}.asignal(:);
-        rast = rast+1;
-    end 
-end
-end 
 
 function S=applyfilter2d(signal,filter)
 
