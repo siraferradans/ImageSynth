@@ -1,5 +1,5 @@
 function Dl2=getDatabase_onY2(Y2,lambda2)
-%This function saves from Y2 the values (||x conv Psi_j1| conv Psi_j2|), for all
+%This function saves from Y2 the values (|x conv Psi_j1| conv Psi_j2), for all
 %j1 (note the two modulus!)
 %Since our scattering can be localized, we obtain the set of corresponding patches of size 2^(J-1) (repatch function).
 %The size of the output depends on the number of lambda1 for the given lambda2 and
@@ -22,7 +22,7 @@ flat=@(x)x(:);
 for i=1:length(Y2{3})
     if ((Y2{3}{i}.scale(2) == j2) && (Y2{3}{i}.orientation(2) == l2))
        % Dl2(rast,:,:) = repatch(Y2{3}{i}.asignal,num_patches);
-        Dl2(rast,:) = flat(Y2{3}{i}.asignal(1:2:end,1:2:end)); 
+        Dl2(rast,:) = flat(Y2{3}{i}.signal(1:2:end,1:2:end)); 
         %we know there is overlapping between the windows, we get only 1 every 4.
         
         rast = rast+1;

@@ -1,6 +1,6 @@
 %Testing which learning algorithm suits better 
 
-load('./Database3000.mat');
+load('./Database1000_J4.mat');
 
 %we choose the dataset with highest std (for instance) 
 % linearindx = @(lambda)(lambda(1)-1).*L+lambda(2);
@@ -31,7 +31,7 @@ testX  = double(XX(:,IndexP(round(end*4/5)+1:end)));
 %testing on the size of the dataset
 params.modeD=0; %atoms with norm 1
 params.mode=1; %l1 norm on the coefs alpha
-params.lambda=0.00;
+params.lambda=0.001;
 params.K=size(trainX,1); %squared dictionary
 params.iter = 1000;
 params.batchsize=512;
@@ -44,7 +44,7 @@ R=@(X,D,alpha)mean( 0.5*sum((X-D*alpha).^2,1)+params.lambda*sum(abs(alpha),1));
 %%
 rast = 1;
 d = size(XX,1);
-i = [d^2 d^2*5 d^2*10 d^2*100 min(d^2*1000,size(trainX,2))];%[0.001 0.05 0.1 0.2 0.4 0.6 0.8 1];
+i = [d^2 d^2*5 d^2*10 min(d^2*100,size(trainX,2))];%[0.001 0.05 0.1 0.2 0.4 0.6 0.8 1];
 t=[];
 for rast=1:length(i) %percentage
 
@@ -55,18 +55,30 @@ for rast=1:length(i) %percentage
  %   [D,alpha] = nmf(data,params);
     
     tic
-    D = mexTrainDL(data,params);
+  %  [D,alpha,err]=online_dict_learn(data,5,params.K);
+
+    D_real=mexTrainDL_Memory(real(data),params);
+    D_imag=mexTrainDL_Memory(imag(data),params);
+    
     t(rast)=toc
 %     %associated coefs
-     alpha=mexLasso(data,D,params);
+     alpha_real=mexLasso(real(data),D_real,params);
+     alpha_imag=mexLasso(imag(data),D_imag,params);
      %and compute the error
-    Etraining(rast) = Energy(data,double(D),double(alpha));
-    reminder_training(rast) = R(data,double(D),double(alpha));
+    Etraining(rast) = Energy(real(data),double(D_real),double(alpha_real)) + ...
+                      Energy(imag(data),double(D_imag),double(alpha_imag));
+ %   reminder_training(rast) = R(data,double(D),double(alpha));
     
     %% testing data set (does it generalize?)
-    alpha2=mexLasso(testX,D,params);   
-    Etesting(rast) = Energy(testX,double(D),double(alpha2));
-    reminder_testing(rast) = R(testX,double(D),double(alpha2));
+    alpha2_real=mexLasso(real(testX),D_real,params);  
+    alpha2_imag=mexLasso(imag(testX),D_imag,params);  
+    
+    
+    Etesting(rast) = Energy(real(testX),double(D_real),double(alpha2_real)) + ...
+                     Energy(imag(testX),double(D_imag),double(alpha2_imag));
+
+    
+   % reminder_testing(rast) = R(testX,double(D),double(alpha2));
   
 %    rast=rast+1;
 end 

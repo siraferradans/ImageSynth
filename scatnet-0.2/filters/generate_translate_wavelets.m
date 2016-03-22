@@ -32,7 +32,7 @@ switch type
     
     
 	[filters,lpal] = generate_scatt_filters(options);
-	options.nscattcoeffs = nsccoeffs(fwdscatt(randn(options.N), filters, options));
+%	options.nscattcoeffs = nsccoeffs(fwdscatt(randn(options.N), filters, options));
 
 	case 'audio'
 
